@@ -1,0 +1,13 @@
+{
+  "name": "node-examples",
+  "version": "1.0.0",
+  "description": "Node modules simples practices.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "start_two": "node index_two.js"
+  },
+  "author": "Hamza Suleman",
+  "license": "ISC"
+}
