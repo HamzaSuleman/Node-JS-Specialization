@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const assert = require('assert');
+const dboper = require('./operations');
 
 const password = 'Hamza03151160732'
 const uri = `mongodb+srv://HamzaSuleman:`+password+`@restuarant.od4dbzw.mongodb.net/?retryWrites=true&w=majority`;
@@ -18,17 +18,30 @@ async function getDishes(){
 const operation = async () => {
     let connection = await client.connect();
     let db = connection.db(dbname);
-    let collection = db.collection("dishes");
-    collection.insertOne({"name": "Pizza", "description": "Yummy dish"}).then(value => {
-         console.log(value);
-     }); 
-    collection.find({}).toArray().then(value => {
-        console.log(value);
-    });
-    db.dropCollection("dishes", (err, result) => {
-        assert.equal(err,null);
-        client.close();
-    });
+    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
+    "dishes", (result) => {
+        console.log("Insert Document:\n", result.insertedId);
+
+        dboper.findDocuments(db, "dishes", (docs) => {
+            console.log("Found Documents:\n", docs);
+
+            dboper.updateDocument(db, { name: "Vadonut" },
+                { description: "Updated Test" }, "dishes",
+                (result) => {
+                    console.log("Updated Document:\n", result);
+
+                    dboper.findDocuments(db, "dishes", (docs) => {
+                        console.log("Found Updated Documents:\n", docs);
+                        
+                        dboper.dropCollection(db, 'dishes', (result) => {
+                            console.log("Dropped Collection: ", result);
+                            client.close();
+                        });
+                       
+                    });
+                });
+        });
+});
 
 }
 
