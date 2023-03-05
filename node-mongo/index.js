@@ -4,7 +4,7 @@ const dboper = require('./operations');
 const password = 'Hamza03151160732'
 const uri = `mongodb+srv://HamzaSuleman:`+password+`@restuarant.od4dbzw.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-const dbname = 'Restuarant';
+const dbname = 'Restuarant'; 
 
 
 async function getDishes(){
