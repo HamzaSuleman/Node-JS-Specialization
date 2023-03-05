@@ -15,49 +15,45 @@ async function getDishes(){
         console.log(dishes);
 }
 
-const operation = async () => {
-    let connection = await client.connect();
-    let db = connection.db(dbname);
-    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
-    "dishes", (result) => {
-        console.log("Insert Document:\n", result.insertedId);
+MongoClient.connect(uri).then((client) => {
 
-        dboper.findDocuments(db, "dishes", (docs) => {
+    console.log('Connected correctly to server');
+    const db = client.db(dbname);
+
+    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
+        "dishes")
+        .then((result) => {
+            console.log("Insert Document:\n", result.insertedId);
+
+            return dboper.findDocuments(db, "dishes");
+        })
+        .then((docs) => {
             console.log("Found Documents:\n", docs);
 
-            dboper.updateDocument(db, { name: "Vadonut" },
-                { description: "Updated Test" }, "dishes",
-                (result) => {
-                    console.log("Updated Document:\n", result);
+            return dboper.updateDocument(db, { name: "Vadonut" },
+                    { description: "Updated Test" }, "dishes");
 
-                    dboper.findDocuments(db, "dishes", (docs) => {
-                        console.log("Found Updated Documents:\n", docs);
-                        
-                        dboper.dropCollection(db, 'dishes', (result) => {
-                            console.log("Dropped Collection: ", result);
-                            client.close();
-                        });
-                       
-                    });
-                });
-        });
-});
+        })
+        .then((result) => {
+            console.log("Updated Document:\n", result.result);
 
-}
+            return dboper.findDocuments(db, "dishes");
+        })
+        .then((docs) => {
+            console.log("Found Updated Documents:\n", docs);
+                            
+            return db.dropCollection("dishes");
+        })
+        .then((result) => {
+            console.log("Dropped Collection: ", result);
 
-async function main(){
+            return client.close();
+        })
+        .catch((err) => console.log(err));
 
-    try {
-       operation();
- 
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
-}
+})
+.catch((err) => console.log(err));
 
-main().catch(console.error);
 
 // async function listDatabases(client){
 //     databasesList = await client.db().admin().listDatabases();
